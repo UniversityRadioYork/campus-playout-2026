@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE recent_tracks SET now_playing = FALSE",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": []
+  },
+  "hash": "2311da1f6f25ab2a98c4ea2ba773fe3b392015eb4ff0aba07212fd4ba4895025"
+}

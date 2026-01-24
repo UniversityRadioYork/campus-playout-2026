@@ -1,0 +1,7 @@
+/target
+/.direnv
+/result
+.env
+/jingles
+/test
+*.db*

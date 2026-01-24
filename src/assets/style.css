@@ -1,0 +1,75 @@
+.htmx-indicator {
+    display: none;
+}
+.htmx-request .htmx-indicator {
+    display: inline-block;
+}
+
+.playing-bars {
+    display: inline-flex;
+    flex-direction: row;
+    vertical-align: baseline;
+    height: 16px;
+    margin-top: 8px;
+    margin-right: .5em;
+}
+
+.playing-bars > span {
+    display: block;
+    width: 8px;
+    margin-left: 4px;
+    height: 4px;
+    margin-top: 12px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .playing-bars > span {
+        animation: playing-bar 1s linear infinite;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .playing-bars > .bar-1 {
+        height: 4px;
+        margin-top: 12px;
+    }
+
+    .playing-bars > .bar-3 {
+        height: 8px;
+        margin-top: 8px;
+    }
+
+    .playing-bars > .bar-2 {
+        height: 12px;
+        margin-top: 0px;
+    }
+}
+
+.playing-bars > .bar-1 {
+    animation-delay: 250ms;
+}
+
+.playing-bars > .bar-3 {
+    animation-delay: 500ms;
+}
+
+.playing-bars > .bar-2 {
+    animation-delay: 750ms;
+}
+
+@keyframes playing-bar {
+    from {
+        height: 4px;
+        margin-top: 12px;
+    }
+
+    50% {
+        height: 16px;
+        margin-top: 0;
+    }
+
+    to {
+        height: 4px;
+        margin-top: 12px;
+    }
+}
