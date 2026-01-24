@@ -2,6 +2,8 @@
 
 Yet another Campus Playout implementation. Will it succeed? Who knows!
 
+![](docs/screenshot.png)
+
 ## About
 
 ### Stack
