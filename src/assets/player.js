@@ -52,27 +52,31 @@ player.addEventListener('loadeddata', eventWrapper((e) => {
     }
 }));
 
+function updateButton() {
+    button.disabled = isLoading;
+    if (isLoading) {
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-outline-primary');
+        button.innerHTML = `
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span class="visually-hidden" role="status">Loading...</span>
+        `;
+    } else {
+        button.innerHTML = isPaused ? 'Start' : 'Stop';
+        if (isPaused) {
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-outline-primary');
+        } else {
+            button.classList.add('btn-primary');
+            button.classList.remove('btn-outline-primary');
+        }
+    }
+}
+
 function eventWrapper(f) {
     return (e) => {
         f(e);
-        button.disabled = isLoading;
-        if (isLoading) {
-            button.classList.remove('btn-primary');
-            button.classList.add('btn-outline-primary');
-            button.innerHTML = `
-                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                <span class="visually-hidden" role="status">Loading...</span>
-            `;
-        } else {
-            button.innerHTML = isPaused ? 'Start' : 'Stop';
-            if (isPaused) {
-                button.classList.remove('btn-primary');
-                button.classList.add('btn-outline-primary');
-            } else {
-                button.classList.add('btn-primary');
-                button.classList.remove('btn-outline-primary');
-            }
-        }
+        updateButton();
     }
 }
 
@@ -89,3 +93,5 @@ function togglePause() {
 button.addEventListener('click', function() {
     togglePause();
 });
+
+updateButton();
