@@ -7,6 +7,12 @@ use campus_playout_2026::{
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::prelude::*;
 
+macro_rules! get_env {
+    ($name:expr) => {
+        std::env::var($name).expect(concat!("environment variable ", $name, " to be set"))
+    };
+}
+
 #[tokio::main]
 async fn main() -> campus_playout_2026::Result<()> {
     tracing_subscriber::registry()
@@ -17,28 +23,32 @@ async fn main() -> campus_playout_2026::Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let api_token = std::env::var("API_TOKEN").expect("environment variable API_TOKEN to be set");
+    let api_token = get_env!("API_TOKEN");
 
     let database = AppDatabase::new(
-        &std::env::var("DATABASE_URL").expect("environment variable DATABASE_URL to be set"),
+        &get_env!("DATABASE_URL"),
     )
     .await?;
 
     let client = ApiClient::new(
-        std::env::var("LAST_FM_API_KEY").expect("environment variable LAST_FM_API_KEY to be set"),
-        std::env::var("MYRADIO_API_BASE").expect("environment variable MYRADIO_API_BASE to be set"),
-        std::env::var("MYRADIO_API_KEY").expect("environment variable MYRADIO_API_KEY to be set"),
+        get_env!("LAST_FM_API_KEY"),
+        get_env!("MYRADIO_API_BASE"),
+        get_env!("MYRADIO_API_KEY"),
     );
 
     let track_cache = TrackCache::new(client.clone());
 
+    let stream_base = get_env!("HLS_BASE_URL");
+    let stream_id = get_env!("SRT_STREAM_ID");
+
     let template_renderer = TemplateRenderer::new(
-        std::env::var("INSTANCE_NAME").expect("environment variable INSTANCE_NAME to be set"),
+        get_env!("INSTANCE_NAME"),
+        format!("{stream_base}/{stream_id}/index.m3u8"),
     );
 
     let playlist_generator = PlaylistGenerator::new(
         client.clone(),
-        PathBuf::from(std::env::var("PLAYLIST_FILE").expect("environment variable PLAYLIST_FILE to be set")),
+        PathBuf::from(get_env!("PLAYLIST_FILE")),
     );
 
     database.stop_all_tracks().await?;
@@ -47,8 +57,7 @@ async fn main() -> campus_playout_2026::Result<()> {
     let playlist_id = if let Some(playlist_id) = database.get_current_playlist().await? {
         playlist_id
     } else {
-        let default_playlist_id = std::env::var("DEFAULT_PLAYLIST_ID")
-            .expect("environment variable DEFAULT_PLAYLIST_ID to be set");
+        let default_playlist_id = get_env!("DEFAULT_PLAYLIST_ID");
         database.set_current_playlist(&default_playlist_id).await?;
         default_playlist_id
     };

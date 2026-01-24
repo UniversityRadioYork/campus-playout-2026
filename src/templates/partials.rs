@@ -8,10 +8,10 @@ impl super::TemplateRenderer {
             .card style="width: 300px" {
                 @if let Some(track) = track {
                     @if let Some(cover_art) = track.cover_art {
-                        img.card-img-top alt="" src=(cover_art);
+                        img.card-img-top loading="lazy" alt="" src=(cover_art);
                     } @else {
                         // TODO: per-instance art
-                        img.card-img-top alt="" src="https://ury.org.uk/images/default_show_profile.png";
+                        img.card-img-top loading="lazy" alt="" src="https://ury.org.uk/images/default_show_profile.png";
                     }
 
                     .card-body {
@@ -20,7 +20,7 @@ impl super::TemplateRenderer {
                     }
                 } @else {
                     // TODO: per-instance art
-                    img.card-img-top alt="" src="https://ury.org.uk/images/default_show_profile.png";
+                    img.card-img-top loading="lazy" alt="" src="https://ury.org.uk/images/default_show_profile.png";
 
                     .card-body {
                         h5.card-title { (self.instance_name) }

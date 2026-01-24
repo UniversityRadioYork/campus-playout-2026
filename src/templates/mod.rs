@@ -1,15 +1,18 @@
 pub mod admin;
 pub mod partials;
+pub mod player;
 
 #[derive(Clone)]
 pub struct TemplateRenderer {
     instance_name: String,
+    stream_url: String,
 }
 
 impl TemplateRenderer {
-    pub fn new(instance_name: String) -> Self {
+    pub fn new(instance_name: String, stream_url: String) -> Self {
         Self {
             instance_name,
+            stream_url,
         }
     }
 
@@ -70,7 +73,7 @@ impl TemplateRenderer {
 
 pub fn error_page(title: &str, body: &[impl maud::Render]) -> maud::Markup {
     // TODO: a better way than this?
-    let renderer = TemplateRenderer::new("".to_string());
+    let renderer = TemplateRenderer::new("".to_string(), "".to_string());
     renderer.page(Some(&format!("Error - Campus Playout Manager")), maud::html! {
         h1.govuk-heading-l {
             (title)
