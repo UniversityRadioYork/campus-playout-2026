@@ -9,6 +9,7 @@ Yet another Campus Playout implementation. Will it succeed? Who knows!
 ### Stack
 
 - [Liquidsoap](https://www.liquidsoap.info) (actually does the audio stuff)
+- [mediamtx](https://mediamtx.org) (HLS streaming)
 - [Rust](https://rust-lang.org) + [axum](https://docs.rs/axum/latest/axum/) (backend)
 - [sqlite](https://sqlite.org) (database)
 - [maud](https://maud.lambda.xyz) (HTML templating)
@@ -24,6 +25,7 @@ Yet another Campus Playout implementation. Will it succeed? Who knows!
 - A rust toolchain
 - Liquidsoap
 - The sqlx-cli (`cargo install sqlx-cli`)
+- mediamtx server with SRT and HLS enabled
 
 ### Configuration
 
@@ -40,9 +42,15 @@ MYRADIO_API_BASE=https://ury.org.uk/api/v2
 MYRADIO_API_KEY=
 
 DEFAULT_PLAYLIST_ID=pop-
-PLAYLIST_FILE=./test/playlist-gen.txt
+JINGLES_FILE=/data/jingles.txt
+PLAYLIST_FILE=./playlist-gen.txt
 
 API_TOKEN=changeme
+
+SRT_HOST=mediamtx
+SRT_PORT=8890
+SRT_STREAM_ID=test-venue
+HLS_BASE_URL=http://mediamtx:8888
 ```
 
 Loading the `.env` file is up to you.

@@ -26,6 +26,8 @@ api_token = get_env("API_TOKEN")
 srt_host = get_env("SRT_HOST")
 srt_port = int_of_string(get_env("SRT_PORT"))
 stream_id = get_env("SRT_STREAM_ID")
+playlist_file = get_env("PLAYLIST_FILE")
+jingles_file = get_env("JINGLES_FILE")
 
 def get_trackid(meta) =
   trackid = list.assoc(default="", "trackid", meta)
@@ -49,8 +51,8 @@ def new_metadata(meta) =
   ))
 end
 
-jingles = playlist("test/jingles.txt")
-tracks = playlist("test/playlist.txt", reload_mode="watch")
+jingles = playlist(jingles_file)
+tracks = playlist(playlist_file, reload_mode="watch")
 
 playout = random(weights=[1, 5], [jingles, tracks])
 
