@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT trackid FROM recent_tracks WHERE now_playing = TRUE ORDER BY played_at DESC LIMIT 1",
+  "describe": {
+    "columns": [
+      {
+        "name": "trackid",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "1d33eba98d408ea713a62d4b528cd1c6c4e64f5ff0a821e479567f06dcef64b8"
+}

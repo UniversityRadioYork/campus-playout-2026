@@ -23,6 +23,9 @@ def get_env(key) =
 end
 
 api_token = get_env("API_TOKEN")
+srt_host = get_env("SRT_HOST")
+srt_port = int_of_string(get_env("SRT_PORT"))
+stream_id = get_env("SRT_STREAM_ID")
 
 def get_trackid(meta) =
   trackid = list.assoc(default="", "trackid", meta)
@@ -57,4 +60,23 @@ playout = mksafe(playout)
 
 playout.on_metadata(new_metadata)
 
-output(playout)
+enc = %ffmpeg(
+  format = "mpegts",
+  interleaved = false,
+  %audio(
+    codec = "aac",
+    channels = 2,
+    ar = 48000,
+    b = "192k",
+    profile = "aac_low"
+  )
+)
+
+output.srt(
+  host=srt_host,
+  port=srt_port,
+  mode="caller",
+  streamid="publish:#{stream_id}",
+  enc,
+  playout
+)
