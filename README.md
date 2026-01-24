@@ -43,7 +43,6 @@ DEFAULT_PLAYLIST_ID=pop-
 PLAYLIST_FILE=./test/playlist-gen.txt
 
 API_TOKEN=changeme
-
 ```
 
 Loading the `.env` file is up to you.
