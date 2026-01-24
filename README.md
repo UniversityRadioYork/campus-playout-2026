@@ -41,6 +41,7 @@ LAST_FM_API_KEY=
 MYRADIO_API_BASE=https://ury.org.uk/api/v2
 MYRADIO_API_KEY=
 
+PLAYLIST_CATEGORY_ID=3
 DEFAULT_PLAYLIST_ID=pop-
 JINGLES_FILE=/data/jingles.txt
 PLAYLIST_FILE=./playlist-gen.txt

@@ -4,7 +4,10 @@ use miette::{Context, IntoDiagnostic};
 use reqwest::Client;
 use serde::de::DeserializeOwned;
 
-use crate::apis::{lastfm::{GetTrackInfoResponse, LastFmResponse}, myradio::{MyRadioPlaylist, MyRadioResponse, MyRadioTrack}};
+use crate::apis::{
+    lastfm::{GetTrackInfoResponse, LastFmResponse},
+    myradio::{MyRadioPlaylist, MyRadioResponse, MyRadioTrack},
+};
 
 mod lastfm;
 pub mod myradio;
@@ -22,10 +25,16 @@ pub struct ApiClient {
     last_fm_api_key: String,
     myradio_api_base: String,
     myradio_api_key: String,
+    playlist_category_id: String,
 }
 
 impl ApiClient {
-    pub fn new(last_fm_api_key: String, myradio_api_base: String, myradio_api_key: String) -> Self {
+    pub fn new(
+        last_fm_api_key: String,
+        myradio_api_base: String,
+        myradio_api_key: String,
+        playlist_category_id: String,
+    ) -> Self {
         Self {
             client: reqwest::Client::builder()
                 .user_agent(USER_AGENT)
@@ -34,6 +43,7 @@ impl ApiClient {
             last_fm_api_key,
             myradio_api_base,
             myradio_api_key,
+            playlist_category_id,
         }
     }
 
@@ -41,11 +51,7 @@ impl ApiClient {
         &self.myradio_api_key
     }
 
-    async fn myradio_get(
-        &self,
-        base: &str,
-        path: String,
-    ) -> miette::Result<reqwest::Response> {
+    async fn myradio_get(&self, base: &str, path: String) -> miette::Result<reqwest::Response> {
         let url = format!("{}{path}", base);
 
         let resp = self
@@ -64,13 +70,23 @@ impl ApiClient {
         &self,
         path: impl Into<String>,
     ) -> miette::Result<T> {
-        let resp = self.myradio_get(&self.myradio_api_base, path.into()).await?;
+        let resp = self
+            .myradio_get(&self.myradio_api_base, path.into())
+            .await?;
         let status = resp.status();
-        let body: MyRadioResponse<T> = resp.json().await.into_diagnostic().with_context(|| "parsing myradio response body")?;
+        let body: MyRadioResponse<T> = resp
+            .json()
+            .await
+            .into_diagnostic()
+            .with_context(|| "parsing myradio response body")?;
         match body {
             MyRadioResponse::Ok { payload } if status.is_success() => Ok(payload),
             MyRadioResponse::Fail { payload } if !status.is_success() => {
-                miette::bail!("myradio error: {} (status code: {})", payload, status.as_u16());
+                miette::bail!(
+                    "myradio error: {} (status code: {})",
+                    payload,
+                    status.as_u16()
+                );
             }
             body => {
                 unreachable!(
@@ -85,11 +101,22 @@ impl ApiClient {
     }
 
     pub async fn get_all_playlists(&self) -> miette::Result<Vec<MyRadioPlaylist>> {
-        self.myradio_api_get("/playlist/allitonesplaylists").await
+        self.myradio_api_get("/playlist/allitonesplaylists")
+            .await
+            .map(|playlists: Vec<MyRadioPlaylist>| {
+                playlists
+                    .into_iter()
+                    .filter(|playlist| playlist.category.id == self.playlist_category_id)
+                    .collect()
+            })
     }
 
-    pub async fn get_playlist_tracks(&self, playlist_id: &str) -> miette::Result<Vec<MyRadioTrack>> {
-        self.myradio_api_get(format!("/playlist/{playlist_id}/tracks")).await
+    pub async fn get_playlist_tracks(
+        &self,
+        playlist_id: &str,
+    ) -> miette::Result<Vec<MyRadioTrack>> {
+        self.myradio_api_get(format!("/playlist/{playlist_id}/tracks"))
+            .await
     }
 
     pub async fn get_cover_art_for_track(
@@ -119,7 +146,9 @@ impl ApiClient {
 
         let resp = match resp {
             LastFmResponse::Ok(resp) => resp,
-            LastFmResponse::Error { error, message } => miette::bail!("last.fm returned error {error}: {message}"),
+            LastFmResponse::Error { error, message } => {
+                miette::bail!("last.fm returned error {error}: {message}")
+            }
         };
 
         if let Some(album) = resp.track.album {

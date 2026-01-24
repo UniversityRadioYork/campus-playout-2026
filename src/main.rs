@@ -34,6 +34,7 @@ async fn main() -> campus_playout_2026::Result<()> {
         get_env!("LAST_FM_API_KEY"),
         get_env!("MYRADIO_API_BASE"),
         get_env!("MYRADIO_API_KEY"),
+        get_env!("PLAYLIST_CATEGORY_ID"),
     );
 
     let track_cache = TrackCache::new(client.clone());

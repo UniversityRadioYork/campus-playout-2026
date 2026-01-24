@@ -28,4 +28,10 @@ pub struct MyRadioPlaylist {
     pub title: String,
     #[serde(rename = "playlistid")]
     pub playlist_id: String,
+    pub category: MyRadioPlaylistCategory,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MyRadioPlaylistCategory {
+    pub id: String,
 }
