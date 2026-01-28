@@ -31,6 +31,8 @@ srt_port = int_of_string(get_env("SRT_PORT"))
 stream_id = get_env("SRT_STREAM_ID")
 playlist_file = get_env("PLAYLIST_FILE")
 jingles_file = get_env("JINGLES_FILE")
+srt_username = get_env("SRT_USERNAME")
+srt_password = get_env("SRT_PASSWORD")
 
 def get_trackid(meta) =
   trackid = list.assoc(default="", "trackid", meta)
@@ -81,7 +83,7 @@ output.srt(
   host=srt_host,
   port=srt_port,
   mode="caller",
-  streamid="publish:#{stream_id}",
+  streamid="publish:#{stream_id}:#{str_username}:#{srt_password}",
   enc,
   playout
 )
