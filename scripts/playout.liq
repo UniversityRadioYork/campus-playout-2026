@@ -5,6 +5,9 @@ settings.frame.audio.samplerate := 48000
 
 settings.server.telnet := true
 
+# bodge for docker :(
+settings.init.allow_root := true
+
 enable_autocue_metadata()
 settings.autocue.preferred.set("internal")
 settings.autocue.internal.metadata_override.set([""])
