@@ -13,6 +13,7 @@ dockerTools.streamLayeredImage {
     tini
     campus-playout
     campus-playout-streamer
+    (dockerTools.caCertificates)
     (writeShellScriptBin "entrypoint" ''
       set -eux -o pipefail
       /bin/campus-playout-streamer &
