@@ -23,7 +23,8 @@
             src = ./.;
             filter = path: type: (craneLib.filterCargoSources path type)
               || (builtins.match ".*/src/assets/.*$" path != null)
-              || (builtins.match ".*/.sqlx/.*\\.json" path != null);
+              || (builtins.match ".*/migrations/.*\\.sql$" path != null)
+              || (builtins.match ".*/.sqlx/.*\\.json$" path != null);
             name = "source";
           };
           buildInputs = deps;
