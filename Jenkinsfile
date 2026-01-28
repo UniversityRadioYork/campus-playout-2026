@@ -10,23 +10,14 @@ pipeline {
 
     stages {
         stage('Build docker image') {
-            agent {
-                docker {
-                    image "ghcr.io/lix-project/lix:2.94"
-                    reuseNode true
-                }
-            }
-
             steps {
                 sh 'nix build --show-trace --log-lines 10000 --fallback .#docker'
-                sh './result > image.tar'
+                sh "./result | docker image load"
             }
         }
 
         stage('Tag and push docker image') {
             steps {
-                sh "docker image load < image.tar"
-                sh "rm image.tar"
                 sh "docker image tag campus-playout-2026:latest ${imageName}:$GIT_COMMIT"
                 sh "docker image push ${imageName}:$GIT_COMMIT"
             }
