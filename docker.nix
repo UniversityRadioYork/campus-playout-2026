@@ -16,7 +16,7 @@ dockerTools.streamLayeredImage {
     (writeShellScriptBin "entrypoint" ''
       set -eux -o pipefail
       /bin/campus-playout-streamer &
-      /bin/campus-playout
+      /bin/campus-playout-2026
     '')
   ];
 
