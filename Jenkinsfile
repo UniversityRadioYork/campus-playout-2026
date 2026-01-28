@@ -4,7 +4,7 @@ def imageName = 'evergiven.ury.york.ac.uk:5000/campus-playout-2026'
 pipeline {
     agent {
         node {
-            label 'docker'
+            label 'docker && nix'
         }
     }
 
