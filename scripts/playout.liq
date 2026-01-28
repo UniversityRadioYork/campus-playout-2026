@@ -83,7 +83,7 @@ output.srt(
   host=srt_host,
   port=srt_port,
   mode="caller",
-  streamid="publish:#{stream_id}:#{str_username}:#{srt_password}",
+  streamid="publish:#{stream_id}:#{srt_username}:#{srt_password}",
   enc,
   playout
 )
