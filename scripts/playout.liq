@@ -5,6 +5,8 @@ settings.frame.audio.samplerate := 48000
 
 settings.server.telnet := true
 
+log.level := 4
+
 # bodge for docker :(
 settings.init.allow_root := true
 
