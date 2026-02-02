@@ -56,7 +56,7 @@ def new_metadata(meta) =
   ))
 end
 
-jingles = playlist(jingles_file)
+jingles = playlist(jingles_file, reload_mode="watch")
 tracks = playlist(playlist_file, reload_mode="watch")
 
 playout = random(weights=[1, 5], [jingles, tracks])
