@@ -59,7 +59,7 @@ end
 jingles = playlist(jingles_file, reload_mode="watch")
 tracks = playlist(playlist_file, reload_mode="watch")
 
-playout = random(weights=[1, 5], [jingles, tracks])
+playout = random(weights=[1, 3], [jingles, tracks])
 
 playout = crossfade(playout)
 
