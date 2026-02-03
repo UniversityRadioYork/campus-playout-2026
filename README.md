@@ -43,7 +43,12 @@ MYRADIO_API_KEY=
 
 PLAYLIST_CATEGORY_ID=3
 DEFAULT_PLAYLIST_ID=pop-
+
 JINGLES_FILE=/data/jingles.txt
+MORNING_JINGLES_FILE=/data/morning-jingles.txt
+AFTERNOON_JINGLES_FILE=/data/afternoon-jingles.txt
+EVENING_JINGLES_FILE=/data/evening-jingles.txt
+
 PLAYLIST_FILE=./playlist-gen.txt
 
 API_TOKEN=changeme

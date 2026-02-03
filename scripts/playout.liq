@@ -20,6 +20,7 @@ def get_env(key) =
     value
   else
     log.critical("Must set the `#{key}` environment variable")
+    thread.delay(1.0)
     shutdown(code=123)
     ""
   end
@@ -31,6 +32,9 @@ srt_port = int_of_string(get_env("SRT_PORT"))
 stream_id = get_env("SRT_STREAM_ID")
 playlist_file = get_env("PLAYLIST_FILE")
 jingles_file = get_env("JINGLES_FILE")
+morning_jingles_file = get_env("MORNING_JINGLES_FILE")
+afternoon_jingles_file = get_env("AFTERNOON_JINGLES_FILE")
+evening_jingles_file = get_env("EVENING_JINGLES_FILE")
 srt_username = get_env("SRT_USERNAME")
 srt_password = get_env("SRT_PASSWORD")
 
@@ -57,9 +61,18 @@ def new_metadata(meta) =
 end
 
 jingles = playlist(jingles_file, reload_mode="watch")
+morning_jingles = playlist(morning_jingles_file, reload_mode="watch")
+afternoon_jingles = playlist(afternoon_jingles_file, reload_mode="watch")
+evening_jingles = playlist(evening_jingles_file, reload_mode="watch")
+timed_jingles = switch([
+  ({6h-13h}, morning_jingles),
+  ({13h-18h}, afternoon_jingles),
+  ({18h-6h}, evening_jingles),
+])
+
 tracks = playlist(playlist_file, reload_mode="watch")
 
-playout = random(weights=[1, 3], [jingles, tracks])
+playout = random(weights=[1, 1, 6], [jingles, timed_jingles, tracks])
 
 playout = crossfade(playout)
 
