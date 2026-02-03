@@ -59,6 +59,10 @@ impl TemplateRenderer {
                     }
 
                     .container.mt-4 {
+                        h1 {
+                            "Campus Playout - " (self.instance_name)
+                        }
+
                         (body)
                     }
 
