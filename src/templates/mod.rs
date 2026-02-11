@@ -53,6 +53,11 @@ impl TemplateRenderer {
                                             "Home"
                                         }
                                     }
+                                    li.nav-item {
+                                        a.nav-link href="https://ury.org.uk/live" {
+                                            "URY Live"
+                                        }
+                                    }
                                 }
                             }
                         }
