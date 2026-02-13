@@ -12,9 +12,15 @@ impl TemplateRenderer {
 
                 audio #player {}
 
-                .card-body {
+                .card-body style="display: flex; gap: 10px;" {
                     button.btn.btn-outline-primary #toggle-button type="button" {
                         "Play"
+                    }
+
+                    button.btn.btn-primary hx-post="/skip" hx-swap="none" {
+                        span.htmx-indicator.spinner-border.spinner-border-sm aria-hidden="true" {}
+                        (" ")
+                        span { "Skip" }
                     }
                 }
 

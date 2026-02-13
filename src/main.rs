@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
 use campus_playout_2026::{
-    apis::ApiClient, database::AppDatabase, playlist::PlaylistGenerator, routes, state::AppState,
-    templates::TemplateRenderer, tracks::TrackCache,
+    apis::ApiClient, database::AppDatabase, liquidsoap, playlist::PlaylistGenerator, routes,
+    state::AppState, templates::TemplateRenderer, tracks::TrackCache,
 };
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::prelude::*;
@@ -25,10 +25,7 @@ async fn main() -> campus_playout_2026::Result<()> {
 
     let api_token = get_env!("API_TOKEN");
 
-    let database = AppDatabase::new(
-        &get_env!("DATABASE_URL"),
-    )
-    .await?;
+    let database = AppDatabase::new(&get_env!("DATABASE_URL")).await?;
 
     let client = ApiClient::new(
         get_env!("LAST_FM_API_KEY"),
@@ -47,10 +44,8 @@ async fn main() -> campus_playout_2026::Result<()> {
         format!("{stream_base}/{stream_id}/index.m3u8"),
     );
 
-    let playlist_generator = PlaylistGenerator::new(
-        client.clone(),
-        PathBuf::from(get_env!("PLAYLIST_FILE")),
-    );
+    let playlist_generator =
+        PlaylistGenerator::new(client.clone(), PathBuf::from(get_env!("PLAYLIST_FILE")));
 
     database.stop_all_tracks().await?;
 
@@ -65,7 +60,17 @@ async fn main() -> campus_playout_2026::Result<()> {
 
     playlist_generator.update_playlist(&playlist_id).await?;
 
-    let state = AppState::new(client, api_token, database, playlist_generator, template_renderer, track_cache);
+    let liquidsoap = liquidsoap::unix(get_env!("UNIX_SOCKET_PATH"));
+
+    let state = AppState::new(
+        client,
+        api_token,
+        database,
+        playlist_generator,
+        template_renderer,
+        track_cache,
+        liquidsoap,
+    );
 
     let app = routes::routes(state).layer(TraceLayer::new_for_http());
 

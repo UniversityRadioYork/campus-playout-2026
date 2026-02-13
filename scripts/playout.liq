@@ -4,6 +4,7 @@ settings.frame.audio.channels := 2
 settings.frame.audio.samplerate := 48000
 
 settings.server.telnet := true
+settings.server.socket := true
 
 # bodge for docker :(
 settings.init.allow_root := true
@@ -35,8 +36,11 @@ jingles_file = get_env("JINGLES_FILE")
 morning_jingles_file = get_env("MORNING_JINGLES_FILE")
 afternoon_jingles_file = get_env("AFTERNOON_JINGLES_FILE")
 evening_jingles_file = get_env("EVENING_JINGLES_FILE")
+unix_socket_path = get_env("UNIX_SOCKET_PATH")
 srt_username = get_env("SRT_USERNAME")
 srt_password = get_env("SRT_PASSWORD")
+
+settings.server.socket.path := unix_socket_path
 
 def get_trackid(meta) =
   trackid = list.assoc(default="", "trackid", meta)

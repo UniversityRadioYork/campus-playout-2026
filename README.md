@@ -51,6 +51,8 @@ EVENING_JINGLES_FILE=/data/evening-jingles.txt
 
 PLAYLIST_FILE=./playlist-gen.txt
 
+UNIX_SOCKET_PATH=test/campus-playout.sock
+
 API_TOKEN=changeme
 
 SRT_HOST=mediamtx

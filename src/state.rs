@@ -1,6 +1,9 @@
 use axum::extract::FromRef;
 
-use crate::{apis::ApiClient, database::AppDatabase, playlist::PlaylistGenerator, templates::TemplateRenderer, tracks::TrackCache};
+use crate::{
+    apis::ApiClient, database::AppDatabase, liquidsoap::unix::UnixLiquidsoapBackend,
+    playlist::PlaylistGenerator, templates::TemplateRenderer, tracks::TrackCache,
+};
 
 #[derive(Clone, FromRef)]
 pub struct AppState {
@@ -10,10 +13,19 @@ pub struct AppState {
     pub playlist_generator: PlaylistGenerator,
     pub template_renderer: TemplateRenderer,
     pub track_cache: TrackCache,
+    pub liquidsoap: UnixLiquidsoapBackend,
 }
 
 impl AppState {
-    pub fn new(api_client: ApiClient, api_token: String, database: AppDatabase, playlist_generator: PlaylistGenerator, template_renderer: TemplateRenderer, track_cache: TrackCache) -> Self {
+    pub fn new(
+        api_client: ApiClient,
+        api_token: String,
+        database: AppDatabase,
+        playlist_generator: PlaylistGenerator,
+        template_renderer: TemplateRenderer,
+        track_cache: TrackCache,
+        liquidsoap: UnixLiquidsoapBackend,
+    ) -> Self {
         Self {
             api_client,
             api_token,
@@ -21,6 +33,7 @@ impl AppState {
             playlist_generator,
             template_renderer,
             track_cache,
+            liquidsoap,
         }
     }
 }
