@@ -55,6 +55,8 @@ API_TOKEN=changeme
 
 SRT_HOST=mediamtx
 SRT_PORT=8890
+SRT_USERNAME=username
+SRT_PASSWORD=password
 SRT_STREAM_ID=test-venue
 HLS_BASE_URL=http://mediamtx:8888
 ```
