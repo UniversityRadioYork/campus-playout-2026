@@ -12,6 +12,6 @@ pub trait LiquidsoapBackend {
 }
 
 #[cfg(unix)]
-pub fn unix<P: ?Sized + Into<PathBuf>>(path: P) -> unix::UnixLiquidsoapBackend {
+pub fn unix<P: Into<PathBuf>>(path: P) -> unix::UnixLiquidsoapBackend {
     unix::UnixLiquidsoapBackend::new(path)
 }
