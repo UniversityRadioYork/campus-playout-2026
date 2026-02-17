@@ -12,7 +12,7 @@ pub struct UnixLiquidsoapBackend {
 
 impl UnixLiquidsoapBackend {
     const ACTION_SEND_COMMAND: &'static [u8] = b"\n";
-    const COMMAND_SKIP_TRACK: &'static [u8] = b"srt.skip";
+    const COMMAND_SKIP_TRACK: &'static [u8] = b"playout.skip";
 
     pub fn new<P: Into<PathBuf>>(path: P) -> Self {
         Self { path: path.into() }

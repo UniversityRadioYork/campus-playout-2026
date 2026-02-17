@@ -3,7 +3,6 @@
 settings.frame.audio.channels := 2
 settings.frame.audio.samplerate := 48000
 
-settings.server.telnet := true
 settings.server.socket := true
 
 # bodge for docker :(
@@ -76,10 +75,18 @@ timed_jingles = switch([
 
 tracks = playlist(playlist_file, reload_mode="watch")
 
+def skip_track(_) =
+  tracks.skip()
+  "Done\n"
+end
+server.register(
+  namespace="playout",
+  "skip",
+  skip_track
+)
+
 playout = random(weights=[1, 1, 6], [jingles, timed_jingles, tracks])
-
 playout = crossfade(playout)
-
 playout = mksafe(playout)
 
 playout.on_metadata(synchronous=false, new_metadata)
