@@ -82,7 +82,7 @@ playout = crossfade(playout)
 
 playout = mksafe(playout)
 
-playout.on_metadata(synchronous=true, new_metadata)
+playout.on_metadata(synchronous=false, new_metadata)
 
 enc = %ffmpeg(
   format = "mpegts",
