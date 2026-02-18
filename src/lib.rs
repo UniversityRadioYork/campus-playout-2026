@@ -1,7 +1,8 @@
-pub mod auth;
 pub mod apis;
+pub mod auth;
 pub mod database;
 pub mod error;
+pub mod liquidsoap;
 pub mod model;
 pub mod playlist;
 pub mod routes;

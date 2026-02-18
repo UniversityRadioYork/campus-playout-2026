@@ -3,7 +3,7 @@
 settings.frame.audio.channels := 2
 settings.frame.audio.samplerate := 48000
 
-settings.server.telnet := true
+settings.server.socket := true
 
 # bodge for docker :(
 settings.init.allow_root := true
@@ -35,8 +35,11 @@ jingles_file = get_env("JINGLES_FILE")
 morning_jingles_file = get_env("MORNING_JINGLES_FILE")
 afternoon_jingles_file = get_env("AFTERNOON_JINGLES_FILE")
 evening_jingles_file = get_env("EVENING_JINGLES_FILE")
+unix_socket_path = get_env("UNIX_SOCKET_PATH")
 srt_username = get_env("SRT_USERNAME")
 srt_password = get_env("SRT_PASSWORD")
+
+settings.server.socket.path := unix_socket_path
 
 def get_trackid(meta) =
   trackid = list.assoc(default="", "trackid", meta)
@@ -72,13 +75,21 @@ timed_jingles = switch([
 
 tracks = playlist(playlist_file, reload_mode="watch")
 
+def skip_track(_) =
+  tracks.skip()
+  "Done\n"
+end
+server.register(
+  namespace="playout",
+  "skip",
+  skip_track
+)
+
 playout = random(weights=[1, 1, 6], [jingles, timed_jingles, tracks])
-
 playout = crossfade(playout)
-
 playout = mksafe(playout)
 
-playout.on_metadata(new_metadata)
+playout.on_metadata(synchronous=false, new_metadata)
 
 enc = %ffmpeg(
   format = "mpegts",
