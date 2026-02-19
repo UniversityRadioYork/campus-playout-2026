@@ -32,5 +32,14 @@ dockerTools.streamLayeredImage {
   config = {
     Cmd = [ "/bin/tini" "/bin/entrypoint" ];
     WorkingDir = "/data";
+    Env = [
+      "DATABASE_URL=\"sqlite:/data/database.db\""
+      "JINGLES_FILE=\"/data/jingles.txt\""
+      "MORNING_JINGLES_FILE=\"/data/morning-jingles.txt\""
+      "AFTERNOON_JINGLES_FILE=\"/data/afternoon-jingles.txt\""
+      "EVENING_JINGLES_FILE=\"/data/evening-jingles.txt\""
+      "PLAYLIST_FILE=\"/data/playlist-gen.txt\""
+      "UNIX_SOCKET_PATH=\"/data/liq.sock\""
+    ];
   };
 }
