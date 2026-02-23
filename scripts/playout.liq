@@ -14,6 +14,10 @@ settings.autocue.internal.metadata_override.set([""])
 settings.autocue.internal.lufs_target.set(-23.0)
 settings.autocue.amplify_behavior.set("override")
 
+settings.lufs.track_gain_target := -18.
+
+enable_lufs_track_gain_metadata()
+
 def get_env(key) =
   value = environment.get(key)
   if value != "" then
@@ -44,7 +48,7 @@ settings.server.socket.path := unix_socket_path
 def get_trackid(meta) =
   trackid = list.assoc(default="", "trackid", meta)
   if trackid == "" then
-    null()
+    null
   else
     int_of_string(trackid)
   end
@@ -63,17 +67,17 @@ def new_metadata(meta) =
   ))
 end
 
-jingles = playlist(jingles_file, reload_mode="watch")
-morning_jingles = playlist(morning_jingles_file, reload_mode="watch")
-afternoon_jingles = playlist(afternoon_jingles_file, reload_mode="watch")
-evening_jingles = playlist(evening_jingles_file, reload_mode="watch")
+jingles = playlist(jingles_file, reload_mode="watch", prefix="lufs_track_gain:")
+morning_jingles = playlist(morning_jingles_file, reload_mode="watch", prefix="lufs_track_gain:")
+afternoon_jingles = playlist(afternoon_jingles_file, reload_mode="watch", prefix="lufs_track_gain:")
+evening_jingles = playlist(evening_jingles_file, reload_mode="watch", prefix="lufs_track_gain:")
 timed_jingles = switch([
   ({6h-13h}, morning_jingles),
   ({13h-18h}, afternoon_jingles),
   ({18h-6h}, evening_jingles),
 ])
 
-tracks = playlist(playlist_file, reload_mode="watch")
+tracks = playlist(playlist_file, reload_mode="watch", prefix="lufs_track_gain:")
 
 def skip_track(_) =
   tracks.skip()

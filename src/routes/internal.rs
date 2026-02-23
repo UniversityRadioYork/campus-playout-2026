@@ -15,8 +15,11 @@ async fn new_metadata(
 ) -> crate::Result<()> {
     state.database.stop_all_tracks().await?;
     if let Some(trackid) = metadata.trackid {
+        tracing::info!(?trackid, "new track started");
         // track
         state.database.track_played(trackid).await?;
+    } else {
+        tracing::info!("track ended");
     }
     Ok(())
 }
