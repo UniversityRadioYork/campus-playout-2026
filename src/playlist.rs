@@ -83,7 +83,7 @@ impl PlaylistGenerator {
             let _ = writeln!(
                 playlist,
                 // TODO: unhardcode
-                "lufs_track_gain:https://ury.org.uk/myradio/NIPSWeb/managed_play?managed_id={managed_id}&api_key={api_key}",
+                "lufs_track_gain:https://ury.org.uk/myradio/NIPSWeb/managed_play?managedid={managed_id}&api_key={api_key}",
                 managed_id = promo.managed_id,
                 api_key = self.client.myradio_api_key(),
             );
