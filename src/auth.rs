@@ -30,14 +30,12 @@ impl FromRequestParts<AppState> for ValidApiToken {
                 }
             }
             Err(e) => {
-                if e.is_missing() {
-                    if parts.method == Method::GET {
-                        let query = Query::<ApiTokenQuery>::from_request_parts(parts, state).await;
-                        if let Ok(query) = query {
-                            if query.api_key == state.api_token {
-                                return Ok(Self);
-                            }
-                        }
+                if e.is_missing() && parts.method == Method::GET {
+                    let query = Query::<ApiTokenQuery>::from_request_parts(parts, state).await;
+                    if let Ok(query) = query
+                        && query.api_key == state.api_token
+                    {
+                        return Ok(Self);
                     }
                 }
             }

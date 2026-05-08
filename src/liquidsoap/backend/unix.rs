@@ -31,8 +31,8 @@ impl UnixLiquidsoapBackend {
         connection.writable().await?;
 
         // send command
-        connection.write(command).await?;
-        connection.write(Self::ACTION_SEND_COMMAND).await?;
+        connection.write_all(command).await?;
+        connection.write_all(Self::ACTION_SEND_COMMAND).await?;
 
         // flush connection
         connection.flush().await
