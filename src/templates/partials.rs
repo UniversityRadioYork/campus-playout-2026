@@ -88,7 +88,7 @@ impl super::TemplateRenderer {
         maud::html! {
             #change_playlist {
                 p {
-                    @if current_playlist != "" {
+                    @if !current_playlist.is_empty() {
                         "Current playlist: " (current_playlist)
                     } @else {
                         "No playlist selected!?"
