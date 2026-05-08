@@ -2,7 +2,10 @@ use std::{collections::HashMap, sync::Arc};
 
 use tokio::sync::Mutex;
 
-use crate::{apis::ApiClient, model::{RecentTrack, RecentTrackRecord, Track}};
+use crate::{
+    apis::ApiClient,
+    model::{RecentTrack, RecentTrackRecord, Track},
+};
 
 #[derive(Clone)]
 pub struct TrackCache {
@@ -20,7 +23,10 @@ impl TrackCache {
 
     async fn fetch_track(&self, track_id: i64) -> miette::Result<Track> {
         let track = self.client.get_track_info(track_id).await?;
-        let cover_art = self.client.get_cover_art_for_track(&track.title, &track.artist).await?;
+        let cover_art = self
+            .client
+            .get_cover_art_for_track(&track.title, &track.artist)
+            .await?;
         Ok(Track {
             trackid: track.track_id,
             title: track.title,
@@ -40,7 +46,10 @@ impl TrackCache {
         }
     }
 
-    pub async fn resolve_recent_tracks(&self, tracks: Vec<RecentTrackRecord>) -> miette::Result<Vec<RecentTrack>> {
+    pub async fn resolve_recent_tracks(
+        &self,
+        tracks: Vec<RecentTrackRecord>,
+    ) -> miette::Result<Vec<RecentTrack>> {
         let mut recent_tracks = Vec::with_capacity(tracks.len());
         for recent_track in tracks {
             let track = self.get_track(recent_track.trackid).await?;

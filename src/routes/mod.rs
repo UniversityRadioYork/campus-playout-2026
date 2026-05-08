@@ -6,7 +6,6 @@ mod admin;
 mod internal;
 mod status;
 
-
 pub fn routes(state: AppState) -> Router {
     Router::new()
         .merge(admin::routes())

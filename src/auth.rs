@@ -1,9 +1,19 @@
-use axum::extract::FromRequestParts;
-use axum_extra::{TypedHeader, headers::{Authorization, authorization::Bearer}};
+use axum::extract::{FromRequestParts, Query};
+use axum_extra::{
+    TypedHeader,
+    headers::{Authorization, authorization::Bearer},
+};
+use reqwest::Method;
+use serde::Deserialize;
 
 use crate::{error::Error, state::AppState};
 
 pub struct ValidApiToken;
+
+#[derive(Deserialize)]
+struct ApiTokenQuery {
+    api_key: String,
+}
 
 impl FromRequestParts<AppState> for ValidApiToken {
     type Rejection = Error;
@@ -16,12 +26,22 @@ impl FromRequestParts<AppState> for ValidApiToken {
         match header {
             Ok(authorization) => {
                 if authorization.token() == state.api_token {
-                    Ok(Self)
-                } else {
-                    Err(Error::Unauthorized)
+                    return Ok(Self);
                 }
-            },
-            Err(_) => Err(Error::Unauthorized),
+            }
+            Err(e) => {
+                if e.is_missing() {
+                    if parts.method == Method::GET {
+                        let query = Query::<ApiTokenQuery>::from_request_parts(parts, state).await;
+                        if let Ok(query) = query {
+                            if query.api_key == state.api_token {
+                                return Ok(Self);
+                            }
+                        }
+                    }
+                }
+            }
         }
+        Err(Error::Unauthorized)
     }
 }

@@ -6,7 +6,7 @@ use serde::de::DeserializeOwned;
 
 use crate::apis::{
     lastfm::{GetTrackInfoResponse, LastFmResponse},
-    myradio::{MyRadioPlaylist, MyRadioResponse, MyRadioTrack},
+    myradio::{MyRadioManagedItem, MyRadioPlaylist, MyRadioResponse, MyRadioTrack},
 };
 
 mod lastfm;
@@ -116,6 +116,14 @@ impl ApiClient {
         playlist_id: &str,
     ) -> miette::Result<Vec<MyRadioTrack>> {
         self.myradio_api_get(format!("/playlist/{playlist_id}/tracks"))
+            .await
+    }
+
+    pub async fn get_managed_playlist_items(
+        &self,
+        playlist_id: &str,
+    ) -> miette::Result<Vec<MyRadioManagedItem>> {
+        self.myradio_api_get(format!("/nipswebPlaylist/{playlist_id}/items"))
             .await
     }
 

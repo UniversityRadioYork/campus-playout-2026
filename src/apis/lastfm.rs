@@ -6,10 +6,7 @@ use serde::Deserialize;
 #[serde(untagged)]
 pub enum LastFmResponse<T: Debug> {
     Ok(T),
-    Error {
-        error: i32,
-        message: String,
-    }
+    Error { error: i32, message: String },
 }
 
 #[derive(Debug, Deserialize)]

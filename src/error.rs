@@ -67,7 +67,8 @@ impl IntoResponse for Error {
                     "error": true,
                     "message": "unauthorized",
                 })),
-            ).into_response(),
+            )
+                .into_response(),
         }
     }
 }

@@ -65,14 +65,22 @@ impl AppDatabase {
     async fn get_key(&self, key: &str) -> crate::Result<Option<String>> {
         let value = sqlx::query!("SELECT v FROM kv WHERE k = ?", key)
             .fetch_optional(&self.pool)
-            .await.into_diagnostic().with_context(|| format!("getting key {key}"))?;
+            .await
+            .into_diagnostic()
+            .with_context(|| format!("getting key {key}"))?;
         Ok(value.map(|v| v.v))
     }
 
     async fn set_key(&self, key: &str, value: &str) -> crate::Result<()> {
-        sqlx::query!("INSERT INTO kv (k, v) VALUES (?1, ?2) ON CONFLICT(k) DO UPDATE SET v = ?2", key, value)
-            .execute(&self.pool)
-            .await.into_diagnostic().with_context(|| format!("failed to set key {key} = {value:?}"))?;
+        sqlx::query!(
+            "INSERT INTO kv (k, v) VALUES (?1, ?2) ON CONFLICT(k) DO UPDATE SET v = ?2",
+            key,
+            value
+        )
+        .execute(&self.pool)
+        .await
+        .into_diagnostic()
+        .with_context(|| format!("failed to set key {key} = {value:?}"))?;
         Ok(())
     }
 

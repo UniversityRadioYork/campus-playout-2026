@@ -67,17 +67,11 @@ def new_metadata(meta) =
   ))
 end
 
-jingles = playlist(jingles_file, reload_mode="watch", prefix="lufs_track_gain:")
-morning_jingles = playlist(morning_jingles_file, reload_mode="watch", prefix="lufs_track_gain:")
-afternoon_jingles = playlist(afternoon_jingles_file, reload_mode="watch", prefix="lufs_track_gain:")
-evening_jingles = playlist(evening_jingles_file, reload_mode="watch", prefix="lufs_track_gain:")
-timed_jingles = switch([
-  ({6h-13h}, morning_jingles),
-  ({13h-18h}, afternoon_jingles),
-  ({18h-6h}, evening_jingles),
-])
+# yes i know it's in the URL
+# give me a better way and i'll change it
+jingles = playlist("http://localhost:3000/__internal/jingles.m3u8?api_key=#{api_token}", reload_mode="seconds", reload=60)
 
-tracks = playlist(playlist_file, reload_mode="watch", prefix="lufs_track_gain:")
+tracks = playlist(playlist_file, reload_mode="watch")
 
 def skip_track(_) =
   tracks.skip()
@@ -89,7 +83,7 @@ server.register(
   skip_track
 )
 
-playout = random(weights=[1, 1, 6], [jingles, timed_jingles, tracks])
+playout = random(weights=[1, 3], [jingles, tracks])
 playout = crossfade(playout)
 playout = mksafe(playout)
 

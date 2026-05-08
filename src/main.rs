@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 
 use campus_playout_2026::{
-    apis::ApiClient, database::AppDatabase, liquidsoap, playlist::PlaylistGenerator, routes,
-    state::AppState, templates::TemplateRenderer, tracks::TrackCache,
+    apis::ApiClient, config::JinglesConfig, database::AppDatabase, liquidsoap,
+    playlist::PlaylistGenerator, routes, state::AppState, templates::TemplateRenderer,
+    tracks::TrackCache,
 };
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::prelude::*;
@@ -44,8 +45,17 @@ async fn main() -> campus_playout_2026::Result<()> {
         format!("{stream_base}/{stream_id}/index.m3u8"),
     );
 
-    let playlist_generator =
-        PlaylistGenerator::new(client.clone(), PathBuf::from(get_env!("PLAYLIST_FILE")));
+    let playlist_generator = PlaylistGenerator::new(
+        client.clone(),
+        JinglesConfig {
+            main_playlist: PathBuf::from(get_env!("JINGLES_FILE")),
+            morning_playlist: PathBuf::from(get_env!("MORNING_JINGLES_FILE")),
+            afternoon_playlist: PathBuf::from(get_env!("AFTERNOON_JINGLES_FILE")),
+            evening_playlist: PathBuf::from(get_env!("EVENING_JINGLES_FILE")),
+            promos_playlist_id: get_env!("PROMOS_PLAYLIST_ID"),
+        },
+        PathBuf::from(get_env!("PLAYLIST_FILE")),
+    );
 
     database.stop_all_tracks().await?;
 

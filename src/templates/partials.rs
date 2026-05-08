@@ -1,4 +1,7 @@
-use crate::{apis::myradio::MyRadioPlaylist, model::{RecentTrack, Track}};
+use crate::{
+    apis::myradio::MyRadioPlaylist,
+    model::{RecentTrack, Track},
+};
 
 impl super::TemplateRenderer {
     pub fn now_playing(&self, track: Option<Track>) -> maud::Markup {
@@ -67,7 +70,11 @@ impl super::TemplateRenderer {
         }
     }
 
-    pub fn selected_playlist(&self, current_playlist_id: Option<&str>, available_playlists: Vec<MyRadioPlaylist>) -> maud::Markup {
+    pub fn selected_playlist(
+        &self,
+        current_playlist_id: Option<&str>,
+        available_playlists: Vec<MyRadioPlaylist>,
+    ) -> maud::Markup {
         let mut current_playlist = "";
 
         if let Some(current_playlist_id) = current_playlist_id {

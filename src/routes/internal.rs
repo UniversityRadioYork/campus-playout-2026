@@ -1,7 +1,11 @@
-use axum::{Json, Router, extract::State, routing::post};
+use axum::{
+    Json, Router,
+    extract::State,
+    routing::{get, post},
+};
 use serde::Deserialize;
 
-use crate::{auth::ValidApiToken, state::AppState};
+use crate::{auth::ValidApiToken, responses::M3U8Playlist, state::AppState};
 
 #[derive(Debug, Deserialize)]
 struct MetadataPayload {
@@ -24,6 +28,16 @@ async fn new_metadata(
     Ok(())
 }
 
+async fn jingles_playlist(
+    _token: ValidApiToken,
+    State(state): State<AppState>,
+) -> crate::Result<M3U8Playlist> {
+    let playlist = state.playlist_generator.get_jingles_playlist().await?;
+    Ok(M3U8Playlist(playlist))
+}
+
 pub fn routes() -> Router<AppState> {
-    Router::new().route("/metadata", post(new_metadata))
+    Router::new()
+        .route("/metadata", post(new_metadata))
+        .route("/jingles.m3u8", get(jingles_playlist))
 }

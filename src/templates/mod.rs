@@ -83,14 +83,17 @@ impl TemplateRenderer {
 pub fn error_page(title: &str, body: &[impl maud::Render]) -> maud::Markup {
     // TODO: a better way than this?
     let renderer = TemplateRenderer::new("".to_string(), "".to_string());
-    renderer.page(Some(&format!("Error - Campus Playout Manager")), maud::html! {
-        h1.govuk-heading-l {
-            (title)
-        }
-        @for para in body {
-            p {
-                (para)
+    renderer.page(
+        Some(&format!("Error - Campus Playout Manager")),
+        maud::html! {
+            h1.govuk-heading-l {
+                (title)
             }
-        }
-    })
+            @for para in body {
+                p {
+                    (para)
+                }
+            }
+        },
+    )
 }
