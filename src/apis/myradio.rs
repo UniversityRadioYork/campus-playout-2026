@@ -6,13 +6,9 @@ use serde::Deserialize;
 #[serde(tag = "status")]
 pub enum MyRadioResponse<T: Debug> {
     #[serde(rename = "OK")]
-    Ok {
-        payload: T,
-    },
+    Ok { payload: T },
     #[serde(rename = "FAIL")]
-    Fail {
-        payload: String,
-    }
+    Fail { payload: String },
 }
 
 #[derive(Debug, Deserialize)]
@@ -21,6 +17,14 @@ pub struct MyRadioTrack {
     pub artist: String,
     #[serde(rename = "trackid")]
     pub track_id: i64,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MyRadioManagedItem {
+    pub title: String,
+    #[serde(rename = "managedid")]
+    pub managed_id: i64,
+    pub expired: bool,
 }
 
 #[derive(Debug, Deserialize)]

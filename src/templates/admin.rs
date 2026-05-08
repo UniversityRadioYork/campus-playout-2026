@@ -1,7 +1,16 @@
-use crate::{apis::myradio::MyRadioPlaylist, model::{RecentTrack, Track}};
+use crate::{
+    apis::myradio::MyRadioPlaylist,
+    model::{RecentTrack, Track},
+};
 
 impl super::TemplateRenderer {
-    pub fn admin_index(&self, track: Option<Track>, recent_tracks: Vec<RecentTrack>, current_playlist_id: Option<&str>, available_playlists: Vec<MyRadioPlaylist>) -> maud::Markup {
+    pub fn admin_index(
+        &self,
+        track: Option<Track>,
+        recent_tracks: Vec<RecentTrack>,
+        current_playlist_id: Option<&str>,
+        available_playlists: Vec<MyRadioPlaylist>,
+    ) -> maud::Markup {
         self.page(None, maud::html! {
             .row {
                 .col-md-auto {
