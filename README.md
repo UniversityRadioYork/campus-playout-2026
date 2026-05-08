@@ -49,6 +49,8 @@ MORNING_JINGLES_FILE=/data/morning-jingles.txt
 AFTERNOON_JINGLES_FILE=/data/afternoon-jingles.txt
 EVENING_JINGLES_FILE=/data/evening-jingles.txt
 
+PROMOS_PLAYLIST_ID=6
+
 PLAYLIST_FILE=./playlist-gen.txt
 
 UNIX_SOCKET_PATH=test/campus-playout.sock
