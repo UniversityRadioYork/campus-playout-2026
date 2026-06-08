@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO recent_tracks(trackid, played_at, now_playing, was_request) VALUES(?, datetime(), TRUE, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "afa9eb21ccab5f489fe9d8f8563baab8f5a34c7b019b10e64a890aa449267ebe"
+}

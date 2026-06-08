@@ -29,13 +29,8 @@ impl PlaylistGenerator {
         let tracks = self.client.get_playlist_tracks(playlist_id).await?;
         let mut s = String::new();
         for track in tracks {
-            let _ = writeln!(
-                s,
-                // TODO: unhardcode
-                "lufs_track_gain:annotate:trackid=\"{track_id}\":https://ury.org.uk/myradio/NIPSWeb/secure_play?trackid={track_id}&api_key={api_key}",
-                track_id = track.track_id,
-                api_key = self.client.myradio_api_key(),
-            );
+            s.push_str(&track.url(self.client.myradio_api_key(), false));
+            s.push('\n');
         }
 
         tokio::fs::write(&self.playlist_file_path, s)

@@ -57,6 +57,7 @@ impl TrackCache {
                 track,
                 now_playing: recent_track.now_playing,
                 played_at: recent_track.played_at,
+                was_request: recent_track.was_request,
             });
         }
         Ok(recent_tracks)

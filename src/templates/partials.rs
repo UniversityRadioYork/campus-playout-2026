@@ -1,5 +1,5 @@
 use crate::{
-    apis::myradio::MyRadioPlaylist,
+    apis::myradio::{MyRadioPlaylist, MyRadioTrack},
     model::{RecentTrack, Track},
 };
 
@@ -61,7 +61,12 @@ impl super::TemplateRenderer {
                                 }
                             }
                             th scope="row" {
-                                (format!("{} - {}", track.track.title, track.track.artist))
+                                (format!("{} - {} ", track.track.title, track.track.artist))
+                                @if track.was_request {
+                                    span.badge.text-bg-secondary {
+                                        "Request"
+                                    }
+                                }
                             }
                         }
                     }
@@ -113,6 +118,74 @@ impl super::TemplateRenderer {
 
                 p {
                     "The next song will be from the selected playlist"
+                }
+            }
+        }
+    }
+
+    pub fn track_request(&self) -> maud::Markup {
+        maud::html! {
+            #track_request {
+                form.row.px-2.pb-2 hx-get="/track/search" hx-target="#track_search_results" hx-swap="innerHTML" hx-disabled-elt="find button" hx-indicator="#track_search_modal_body" {
+                    .input-group.px-0 {
+                        input type="text" class="form-control" name="query" placeholder="Search for a track" aria-label="Search for a track" aria-describedby="button-track-request-search" style="max-width: 360px";
+                        button class="btn btn-outline-secondary" type="submit" id="button-track-request-search" data-bs-toggle="modal" data-bs-target="#track-search-modal" {
+                            "Search"
+                        }
+                    }
+                }
+
+                .modal.fade id="track-search-modal" tabindex="-1" aria-labelledby="track-search-modal-label" aria-hidden="true" {
+                    .modal-dialog.modal-lg {
+                        .modal-content {
+                            .modal-header {
+                                h1 class="modal-title fs-5" id="track-search-modal-label" {
+                                    "Search results"
+                                }
+                                button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {}
+                            }
+                            #track_search_modal_body.modal-body {
+                                .spinner-border.htmx-indicator role="status" id="track-search-spinner" {
+                                    span.visually-hidden { "Loading..." }
+                                }
+
+                                #track_search_results {
+                                    "lol"
+                                }
+                            }
+                            .modal-footer {
+                                button type="button" class="btn btn-secondary" data-bs-dismiss="modal" { "Cancel" }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn track_search_results(&self, tracks: &[MyRadioTrack]) -> maud::Markup {
+        maud::html! {
+            table.table {
+                thead {
+                    tr {
+                        th scope="col" { "Title" }
+                        th scope="col" { "Artist" }
+                        th scope="col" { "Request" }
+                    }
+                }
+
+                tbody {
+                    @for track in tracks {
+                        tr {
+                            th scope="row" { (track.title) }
+                            td { (track.artist) }
+                            td {
+                                button type="button" class="btn btn-primary btn-sm" hx-post="/track/request" hx-vals=(format!(r#"{{"track_id": {}}}"#, track.track_id)) data-bs-dismiss="modal" {
+                                    "Request"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
