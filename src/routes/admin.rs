@@ -90,6 +90,10 @@ async fn track_search(
     State(state): State<AppState>,
     Query(query): Query<TrackSearchQuery>,
 ) -> crate::Result<maud::Markup> {
+    if query.query.is_empty() {
+        return Ok(state.template_renderer.track_search_no_query());
+    }
+
     let mut tracks = Vec::with_capacity(50);
     tracks.append(
         &mut state
