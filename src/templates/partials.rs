@@ -117,7 +117,7 @@ impl super::TemplateRenderer {
                 }
 
                 p {
-                    "The next song will be from the selected playlist"
+                    "The next song will be from the selected playlist."
                 }
             }
         }
@@ -135,6 +135,10 @@ impl super::TemplateRenderer {
                             "Search"
                         }
                     }
+                }
+
+                p {
+                    "The requested song may not play immediately, as the next song may have already been loaded."
                 }
 
                 .modal.fade id="track-search-modal" tabindex="-1" aria-labelledby="track-search-modal-label" aria-hidden="true" {
