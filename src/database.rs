@@ -1,7 +1,8 @@
 use miette::{Context, IntoDiagnostic};
 use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
+use time::PrimitiveDateTime;
 
-use crate::model::RecentTrackRecord;
+use crate::model::{RecentTrackRecord, TrackRequestStatRecord};
 
 const CURRENT_PLAYLIST_KEY: &str = "current_playlist";
 
@@ -73,6 +74,19 @@ impl AppDatabase {
         .with_context(|| "inserting request log entry")?;
 
         Ok(())
+    }
+
+    pub async fn get_request_stats(&self, from: PrimitiveDateTime, to: PrimitiveDateTime) -> crate::Result<Vec<TrackRequestStatRecord>> {
+        let stats = sqlx::query_as!(
+            TrackRequestStatRecord,
+            "SELECT trackid, COUNT(*) AS plays, MAX(requested_at) AS \"last_requested_at: time::PrimitiveDateTime\" FROM track_requests WHERE requested_at >= ? AND requested_at <= ? GROUP BY trackid;",
+            from, to,
+        ).fetch_all(&self.pool)
+        .await
+        .into_diagnostic()
+        .with_context(|| "generating track request report")?;
+
+        Ok(stats)
     }
 
     async fn get_key(&self, key: &str) -> crate::Result<Option<String>> {
