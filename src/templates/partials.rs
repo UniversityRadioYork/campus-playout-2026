@@ -126,6 +126,8 @@ impl super::TemplateRenderer {
     pub fn track_request(&self) -> maud::Markup {
         maud::html! {
             #track_request {
+                h2 { "Song request" }
+
                 form.row.px-2.pb-2 hx-get="/track/search" hx-target="#track_search_results" hx-swap="innerHTML" hx-disabled-elt="find button" hx-indicator="#track_search_modal_body" {
                     .input-group.px-0 {
                         input type="text" class="form-control" name="query" placeholder="Search for a track" aria-label="Search for a track" aria-describedby="button-track-request-search" style="max-width: 360px";
@@ -159,6 +161,14 @@ impl super::TemplateRenderer {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    pub fn track_search_no_query(&self) -> maud::Markup {
+        maud::html! {
+            .alert.alert-danger role="alert" {
+                "You need to enter a search term!"
             }
         }
     }
