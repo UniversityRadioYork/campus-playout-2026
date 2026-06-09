@@ -1,6 +1,7 @@
 pub mod admin;
 pub mod partials;
 pub mod player;
+pub mod stats;
 
 #[derive(Clone)]
 pub struct TemplateRenderer {

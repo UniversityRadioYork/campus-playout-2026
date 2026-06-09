@@ -4,7 +4,7 @@ use tokio::sync::Mutex;
 
 use crate::{
     apis::ApiClient,
-    model::{RecentTrack, RecentTrackRecord, Track},
+    model::{RecentTrack, RecentTrackRecord, Track, TrackRequestStat, TrackRequestStatRecord},
 };
 
 #[derive(Clone)]
@@ -61,5 +61,18 @@ impl TrackCache {
             });
         }
         Ok(recent_tracks)
+    }
+
+    pub async fn resolve_request_stats(&self, stats: Vec<TrackRequestStatRecord>) -> miette::Result<Vec<TrackRequestStat>> {
+        let mut request_stats = Vec::with_capacity(stats.len());
+        for stat in stats {
+            let track = self.get_track(stat.trackid.expect("trackid to always be set")).await?;
+            request_stats.push(TrackRequestStat {
+                track,
+                plays: stat.plays,
+                last_requested_at: stat.last_requested_at,
+            });
+        }
+        Ok(request_stats)
     }
 }

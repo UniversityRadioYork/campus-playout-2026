@@ -24,9 +24,21 @@ pub struct RecentTrack {
 }
 
 pub struct TrackRequestRecord {
-    pub track_request_id: i64,
-    pub trackid: i64,
+    pub track_request_id: Option<i64>,
+    pub trackid: Option<i64>,
     pub requested_at: PrimitiveDateTime,
+}
+
+pub struct TrackRequestStatRecord {
+    pub trackid: Option<i64>,
+    pub plays: i64,
+    pub last_requested_at: PrimitiveDateTime,
+}
+
+pub struct TrackRequestStat {
+    pub track: Track,
+    pub plays: i64,
+    pub last_requested_at: PrimitiveDateTime,
 }
 
 pub struct TrackRequest {
