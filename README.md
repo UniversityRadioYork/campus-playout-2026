@@ -69,7 +69,7 @@ Loading the `.env` file is up to you.
 
 ### Database
 
-Create the database with `sqlx database create`.
+Create the database with `sqlx database create` and run migrations with `sqlx migrate run`.
 
 ### Running
 
