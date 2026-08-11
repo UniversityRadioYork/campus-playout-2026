@@ -6,4 +6,4 @@ CREATE TABLE track_requests
     requested_at BOOLEAN NOT NULL
 );
 
-ALTER TABLE recent_tracks ADD COLUMN was_request BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE recent_tracks ADD COLUMN was_request BOOLEAN NOT NULL DEFAULT FALSE;
