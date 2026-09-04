@@ -1,7 +1,8 @@
 use miette::{Context, IntoDiagnostic};
 use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
+use time::PrimitiveDateTime;
 
-use crate::model::RecentTrackRecord;
+use crate::model::{RecentTrackRecord, TrackRequestStatRecord};
 
 const CURRENT_PLAYLIST_KEY: &str = "current_playlist";
 
@@ -38,8 +39,8 @@ impl AppDatabase {
         Ok(())
     }
 
-    pub async fn track_played(&self, trackid: i64) -> crate::Result<()> {
-        sqlx::query!("INSERT INTO recent_tracks(trackid, played_at, now_playing) VALUES(?, datetime(), TRUE)", trackid)
+    pub async fn track_played(&self, trackid: i64, was_request: bool) -> crate::Result<()> {
+        sqlx::query!("INSERT INTO recent_tracks(trackid, played_at, now_playing, was_request) VALUES(?, datetime(), TRUE, ?)", trackid, was_request)
             .execute(&self.pool)
             .await
             .into_diagnostic()
@@ -56,10 +57,36 @@ impl AppDatabase {
     }
 
     pub async fn get_recent_tracks(&self) -> crate::Result<Vec<RecentTrackRecord>> {
-        let tracks = sqlx::query_as!(RecentTrackRecord, "SELECT recent_track_id, trackid, played_at as \"played_at: time::PrimitiveDateTime\", now_playing FROM recent_tracks ORDER BY played_at DESC LIMIT 6")
+        let tracks = sqlx::query_as!(RecentTrackRecord, "SELECT recent_track_id, trackid, played_at as \"played_at: time::PrimitiveDateTime\", now_playing, was_request FROM recent_tracks ORDER BY played_at DESC LIMIT 6")
             .fetch_all(&self.pool)
             .await.into_diagnostic().with_context(|| "getting recently played tracks")?;
         Ok(tracks)
+    }
+
+    pub async fn track_requested(&self, track_id: i64) -> crate::Result<()> {
+        sqlx::query!(
+            "INSERT INTO track_requests(trackid, requested_at) VALUES(?, datetime())",
+            track_id
+        )
+        .execute(&self.pool)
+        .await
+        .into_diagnostic()
+        .with_context(|| "inserting request log entry")?;
+
+        Ok(())
+    }
+
+    pub async fn get_request_stats(&self, from: PrimitiveDateTime, to: PrimitiveDateTime) -> crate::Result<Vec<TrackRequestStatRecord>> {
+        let stats = sqlx::query_as!(
+            TrackRequestStatRecord,
+            "SELECT trackid, COUNT(*) AS plays, MAX(requested_at) AS \"last_requested_at: time::PrimitiveDateTime\" FROM track_requests WHERE requested_at >= ? AND requested_at <= ? GROUP BY trackid;",
+            from, to,
+        ).fetch_all(&self.pool)
+        .await
+        .into_diagnostic()
+        .with_context(|| "generating track request report")?;
+
+        Ok(stats)
     }
 
     async fn get_key(&self, key: &str) -> crate::Result<Option<String>> {

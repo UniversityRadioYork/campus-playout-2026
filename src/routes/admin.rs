@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use axum::{
     Form, Router,
-    extract::State,
+    extract::{Query, State},
     routing::{get, post},
 };
 use miette::{Context, IntoDiagnostic};
@@ -13,6 +13,16 @@ use crate::{apis::myradio::MyRadioPlaylist, liquidsoap::LiquidsoapBackend, state
 #[derive(Deserialize)]
 struct SetPlaylistBody {
     playlist_id: String,
+}
+
+#[derive(Deserialize)]
+struct TrackSearchQuery {
+    query: String,
+}
+
+#[derive(Deserialize)]
+struct TrackRequestBody {
+    track_id: i64,
 }
 
 async fn get_playlist_info(
@@ -76,9 +86,64 @@ async fn skip_track(State(state): State<AppState>) -> crate::Result<()> {
     Ok(())
 }
 
+async fn track_search(
+    State(state): State<AppState>,
+    Query(query): Query<TrackSearchQuery>,
+) -> crate::Result<maud::Markup> {
+    if query.query.is_empty() {
+        return Ok(state.template_renderer.track_search_no_query());
+    }
+
+    let mut tracks = Vec::with_capacity(50);
+    tracks.append(
+        &mut state
+            .api_client
+            .search_track(Some(&query.query), None)
+            .await
+            .with_context(|| "searching for track by name")?,
+    );
+    tracks.append(
+        &mut state
+            .api_client
+            .search_track(None, Some(&query.query))
+            .await
+            .with_context(|| "searching for track by artist")?,
+    );
+
+    Ok(state.template_renderer.track_search_results(&tracks))
+}
+
+async fn track_request(
+    State(state): State<AppState>,
+    Form(body): Form<TrackRequestBody>,
+) -> crate::Result<()> {
+    let track = state
+        .api_client
+        .get_track_info(body.track_id)
+        .await
+        .with_context(|| format!("fetching track information for {}", body.track_id))?;
+
+    let track_url = track.url(state.api_client.myradio_api_key(), true);
+
+    tracing::info!(track_id = ?body.track_id, ?track_url, "track requested");
+
+    state
+        .liquidsoap
+        .request_track(&track_url)
+        .await
+        .into_diagnostic()
+        .with_context(|| "sending request to liquidsoap")?;
+
+    state.database.track_requested(track.track_id).await?;
+
+    Ok(())
+}
+
 pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/", get(admin_page))
         .route("/playlist", post(set_playlist))
         .route("/skip", post(skip_track))
+        .route("/track/search", get(track_search))
+        .route("/track/request", post(track_request))
 }

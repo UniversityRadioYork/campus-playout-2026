@@ -29,6 +29,10 @@ impl super::TemplateRenderer {
                     div {
                         (self.selected_playlist(current_playlist_id, available_playlists))
                     }
+
+                    div {
+                        (self.track_request())
+                    }
                 }
             }
         })

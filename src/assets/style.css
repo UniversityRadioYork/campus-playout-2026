@@ -73,3 +73,7 @@
         margin-top: 12px;
     }
 }
+
+.htmx-request #track_search_results {
+    display: none;
+}

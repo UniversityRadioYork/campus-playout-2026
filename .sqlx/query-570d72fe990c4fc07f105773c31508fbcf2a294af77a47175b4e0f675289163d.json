@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT recent_track_id, trackid, played_at as \"played_at: time::PrimitiveDateTime\", now_playing FROM recent_tracks ORDER BY played_at DESC LIMIT 6",
+  "query": "SELECT recent_track_id, trackid, played_at as \"played_at: time::PrimitiveDateTime\", now_playing, was_request FROM recent_tracks ORDER BY played_at DESC LIMIT 6",
   "describe": {
     "columns": [
       {
@@ -22,6 +22,11 @@
         "name": "now_playing",
         "ordinal": 3,
         "type_info": "Bool"
+      },
+      {
+        "name": "was_request",
+        "ordinal": 4,
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -31,8 +36,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "f0beec9539115d571123611bd50dab693c6a8c65f44be9ee94b7aca8071e2b8e"
+  "hash": "570d72fe990c4fc07f105773c31508fbcf2a294af77a47175b4e0f675289163d"
 }

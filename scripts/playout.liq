@@ -54,10 +54,15 @@ def get_trackid(meta) =
   end
 end
 
+def was_request(meta) =
+  bool_of_string(list.assoc(default="false", "is_request", meta))
+end
+
 def new_metadata(meta) =
   ignore(http.post(
     data = json.stringify({
       trackid = get_trackid(meta),
+      was_request = was_request(meta),
     }),
     headers = [
       ("Content-Type", "application/json; charset=UTF-8"),
@@ -72,6 +77,10 @@ end
 jingles = playlist("http://localhost:3000/__internal/jingles.m3u8?api_key=#{api_token}", reload_mode="seconds", reload=60)
 
 tracks = playlist(playlist_file, reload_mode="watch")
+
+track_requests = request.queue(id="track_requests")
+
+tracks = fallback([track_requests, tracks])
 
 def skip_track(_) =
   tracks.skip()

@@ -19,6 +19,21 @@ pub struct MyRadioTrack {
     pub track_id: i64,
 }
 
+impl MyRadioTrack {
+    pub fn url(&self, api_key: &str, is_request: bool) -> String {
+        let extra_meta = if is_request {
+            ",is_request=\"true\""
+        } else {
+            ""
+        };
+        // TODO: unhardcode myradio URL
+        format!(
+            "lufs_track_gain:annotate:trackid=\"{track_id}\"{extra_meta}:https://ury.org.uk/myradio/NIPSWeb/secure_play?trackid={track_id}&api_key={api_key}",
+            track_id = self.track_id
+        )
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct MyRadioManagedItem {
     pub title: String,

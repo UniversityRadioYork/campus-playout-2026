@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO track_requests(trackid, requested_at) VALUES(?, datetime())",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "3ba68e9fd08f8784507f09ba61c2abd1303d098fa1ef252f8fc2e4fe4f4ee973"
+}

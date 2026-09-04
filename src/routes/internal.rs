@@ -10,6 +10,7 @@ use crate::{auth::ValidApiToken, responses::M3U8Playlist, state::AppState};
 #[derive(Debug, Deserialize)]
 struct MetadataPayload {
     trackid: Option<i64>,
+    was_request: Option<bool>,
 }
 
 async fn new_metadata(
@@ -21,7 +22,10 @@ async fn new_metadata(
     if let Some(trackid) = metadata.trackid {
         tracing::info!(?trackid, "new track started");
         // track
-        state.database.track_played(trackid).await?;
+        state
+            .database
+            .track_played(trackid, metadata.was_request.unwrap_or(false))
+            .await?;
     } else {
         tracing::info!("track ended");
     }

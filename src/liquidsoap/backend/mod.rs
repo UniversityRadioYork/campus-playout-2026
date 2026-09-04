@@ -9,6 +9,7 @@ pub trait LiquidsoapBackend {
     type Error;
 
     async fn skip_track(&self) -> Result<(), Self::Error>;
+    async fn request_track(&self, url: &str) -> Result<(), Self::Error>;
 }
 
 #[cfg(unix)]

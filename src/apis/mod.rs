@@ -19,6 +19,8 @@ const USER_AGENT: &str = concat!(
     " (+https://ury.org.uk)"
 );
 
+const NO_QUERY: Option<&()> = None;
+
 #[derive(Clone)]
 pub struct ApiClient {
     client: Client,
@@ -51,13 +53,26 @@ impl ApiClient {
         &self.myradio_api_key
     }
 
-    async fn myradio_get(&self, base: &str, path: String) -> miette::Result<reqwest::Response> {
+    async fn myradio_get<Q: serde::Serialize + ?Sized>(
+        &self,
+        base: &str,
+        path: String,
+        query: Option<&Q>,
+    ) -> miette::Result<reqwest::Response> {
         let url = format!("{}{path}", base);
 
-        let resp = self
+        let req = self
             .client
             .get(url)
-            .query(&[("api_key", &self.myradio_api_key)])
+            .query(&[("api_key", &self.myradio_api_key)]);
+
+        let req = if let Some(query) = query {
+            req.query(query)
+        } else {
+            req
+        };
+
+        let resp = req
             .send()
             .await
             .into_diagnostic()
@@ -66,12 +81,13 @@ impl ApiClient {
         Ok(resp)
     }
 
-    async fn myradio_api_get<T: Debug + DeserializeOwned>(
+    async fn myradio_api_get<T: Debug + DeserializeOwned, Q: serde::Serialize + ?Sized>(
         &self,
         path: impl Into<String>,
+        query: Option<&Q>,
     ) -> miette::Result<T> {
         let resp = self
-            .myradio_get(&self.myradio_api_base, path.into())
+            .myradio_get(&self.myradio_api_base, path.into(), query)
             .await?;
         let status = resp.status();
         let body: MyRadioResponse<T> = resp
@@ -97,11 +113,12 @@ impl ApiClient {
     }
 
     pub async fn get_track_info(&self, track_id: i64) -> miette::Result<MyRadioTrack> {
-        self.myradio_api_get(format!("/track/{track_id}")).await
+        self.myradio_api_get(format!("/track/{track_id}"), NO_QUERY)
+            .await
     }
 
     pub async fn get_all_playlists(&self) -> miette::Result<Vec<MyRadioPlaylist>> {
-        self.myradio_api_get("/playlist/allitonesplaylists")
+        self.myradio_api_get("/playlist/allitonesplaylists", NO_QUERY)
             .await
             .map(|playlists: Vec<MyRadioPlaylist>| {
                 playlists
@@ -115,7 +132,7 @@ impl ApiClient {
         &self,
         playlist_id: &str,
     ) -> miette::Result<Vec<MyRadioTrack>> {
-        self.myradio_api_get(format!("/playlist/{playlist_id}/tracks"))
+        self.myradio_api_get(format!("/playlist/{playlist_id}/tracks"), NO_QUERY)
             .await
     }
 
@@ -123,8 +140,20 @@ impl ApiClient {
         &self,
         playlist_id: &str,
     ) -> miette::Result<Vec<MyRadioManagedItem>> {
-        self.myradio_api_get(format!("/nipswebPlaylist/{playlist_id}/items"))
+        self.myradio_api_get(format!("/nipswebPlaylist/{playlist_id}/items"), NO_QUERY)
             .await
+    }
+
+    pub async fn search_track(
+        &self,
+        title: Option<&str>,
+        artist: Option<&str>,
+    ) -> miette::Result<Vec<MyRadioTrack>> {
+        self.myradio_api_get(
+            "/track/search",
+            Some(&[("title", title), ("artist", artist), ("limit", Some("25"))]),
+        )
+        .await
     }
 
     pub async fn get_cover_art_for_track(
