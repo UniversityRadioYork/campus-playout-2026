@@ -1,0 +1,32 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT trackid, COUNT(*) AS plays, MAX(requested_at) AS \"last_requested_at: time::PrimitiveDateTime\" FROM track_requests WHERE requested_at >= ? AND requested_at <= ? GROUP BY trackid;",
+  "describe": {
+    "columns": [
+      {
+        "name": "trackid",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "plays",
+        "ordinal": 1,
+        "type_info": "Integer"
+      },
+      {
+        "name": "last_requested_at: time::PrimitiveDateTime",
+        "ordinal": 2,
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "517623318da513bf354343f5528d85821c849ffd5815a0bfe4889019773f1026"
+}
