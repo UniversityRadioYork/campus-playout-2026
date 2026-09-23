@@ -1,0 +1,12 @@
+{
+  "name": "Debian",
+
+  "dockerComposeFile": ["compose.yaml"],
+  "service": "playout",
+  "workspaceFolder": "/workspace",
+
+  "postCreateCommand": "RUSTFLAGS=\"-C link-arg=-fuse-ld=mold\" cargo install sqlx-cli --no-default-features --features sqlite",
+  "forwardPorts": [3000],
+  "remoteUser": "vscode",
+  "mounts": ["source=cargo-cache,target=/home/vscode/.cargo,type=volume"]
+}
