@@ -55,7 +55,9 @@ pipeline {
             steps {
                 script {
                     sh "docker service update --image ${imageName}:${imageTag} campus-playout-courtyard"
+                    sh "docker service update --image ${imageName}:${imageTag} campus-playout-glasshouse"
                     sh "docker service update --image ${imageName}:${imageTag} campus-playout-kitchen"
+                    sh "docker service update --image ${imageName}:${imageTag} campus-playout-vbar"
                 }
             }
         }
